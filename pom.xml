@@ -50,8 +50,11 @@
 						<runCoverage>true</runCoverage>
 						<formats>
 							<format>html</format>
+							<format>console</format>
+							<format>json</format>
 						</formats>
 					</coverage>
+					<runtimeProduct>MULE</runtimeProduct>
 				</configuration>
 			</plugin>
 		</plugins>
