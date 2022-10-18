@@ -26,20 +26,6 @@ jobs:
                 name: maven-settings-xml-action
                 uses: whelk-io/maven-settings-xml-action@v16
                 with: 
-                    repositories:  |
-                      [
-                        {
-                          "id": "MuleRepository",
-                          "name": "MuleRepository",
-                          "url": "https://repository.mulesoft.org/nexus-ee/content/repositories/releases-ee/",
-                          "releases": {
-                            "enabled": "true"
-                          },
-                          "snapshots": {
-                            "enabled": "true"
-                          }
-                        }
-                      ]
                     servers:  |
                       [
                         {
