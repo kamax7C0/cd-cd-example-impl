@@ -1,7 +1,7 @@
 # This workflow will build a MuleSoft project and deploy to CloudHub
 name: Test CI Pipeline
 on: 
-    [push, pull_request]: 
+    push: 
         branches:
             - development
 jobs: 
