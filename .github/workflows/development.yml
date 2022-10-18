@@ -43,7 +43,7 @@ jobs:
                       ]      
             - 
                 name: Build
-                run: mvn -B package --file pom.xml
+                run: mvn -B package -DskipMunitTests --file pom.xml
             - 
                 name: Stamp artifact file name with commit hash
                 run:   |

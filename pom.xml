@@ -54,7 +54,6 @@
 							<format>json</format>
 						</formats>
 					</coverage>
-					<runtimeProduct>MULE</runtimeProduct>
 				</configuration>
 			</plugin>
 		</plugins>
