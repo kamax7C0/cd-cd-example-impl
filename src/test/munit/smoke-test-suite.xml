@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<munit:config name="smoke-test-suite.xml" />
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="54bffbff-ee15-433f-9b84-4c0c0c87520a" basePath="/api/" >
+		<http:request-connection host="mkogan-cicd-example.de-c1.eu1.cloudhub.io" />
+	</http:request-config>
+	<munit:test name="smoke-test-suiteTest" doc:id="f9cd9bdc-302d-483d-a598-7095435e2d87" >
+		<munit:execution >
+			<http:request method="GET" doc:name="Request" doc:id="d2eebc46-89b4-4567-9f25-78eb338fd0a8" config-ref="HTTP_Request_configuration" path="helloworld" outputMimeType="application/json"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="6c105938-3ed3-4b6c-b5ea-99300f03d567" is="#[MunitTools::containsString('Hello')]" expression="#[payload.message]" message="Smoke test failed: Hello could not be found"/>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

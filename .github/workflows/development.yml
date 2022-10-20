@@ -1,0 +1,113 @@
+# This workflow will build a MuleSoft project and deploy to CloudHub
+name: Test CI Pipeline
+on: 
+    push:
+      branches:
+        - 'feature/**'
+        - development 
+    pull_request:  
+        branches: 
+            - development
+            - master
+jobs:  
+    build:  
+        runs-on: ubuntu-latest
+        steps:  
+            - 
+                uses: actions/checkout@v2
+            - 
+                uses: actions/cache@v1
+                with:  
+                    path: ~/.m2/repository
+                    key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+                    restore-keys:   |
+                      ${{ runner.os }}-maven-
+            - 
+                name: Set up JDK 1.8
+                uses: actions/setup-java@v1
+                with:  
+                    java-version: 1.8
+            -  
+                name: maven-settings-xml-action
+                uses: whelk-io/maven-settings-xml-action@v16
+                with: 
+                    servers:  |
+                      [
+                        {
+                          "id": "anypoint-exchange-v3",
+                          "username": "${{ secrets.ANYPOINT_USERNAME }}",
+                          "password": "${{ secrets.ANYPOINT_PASSWORD }}",
+                          "configuration": {
+                            "httpConfiguration": {
+                              "all": {
+                                "usePreemptive": "true"
+                              }
+                            }
+                          }
+                        }
+                      ]      
+            - 
+                name: Build
+                run: mvn -B clean package -DskipMunitTests --file pom.xml
+            - 
+                name: Stamp artifact file name with commit hash
+                run:   |
+                  artifactName1=$(ls target/*.jar | head -1)
+                  commitHash=$(git rev-parse --short "$GITHUB_SHA")
+                  artifactName2=$(ls target/*.jar | head -1 | sed "s/.jar/.$commitHash.jar/g")
+                  mv $artifactName1 $artifactName2
+            - 
+                uses: actions/upload-artifact@master
+                with:  
+                    name: artifacts
+                    path: target/*.jar
+            - 
+                name: Some check on branch
+                id: branch_check
+                run: |
+                  echo "Running on branch ${{ github.ref }}"
+                  if [ "${{ github.ref }}" = "refs/heads/master" ]; then
+                    echo "::set-output name=env_name::Production"
+                  elif [ "${{ github.ref }}" = "refs/heads/development" ]; then
+                    echo "::set-output name=env_name::Development"
+                  else
+                     echo "::set-output name=env_name::Features"
+                  fi         
+                  
+            - 
+                name: Use variable setup in previous step
+                run: echo "I'm using variable ${{ steps.branch_check.outputs.env_name }}"
+        outputs:
+            env_name: ${{ steps.branch_check.outputs.env_name }}
+    deploy:
+        needs: build
+        runs-on: ubuntu-latest
+        environment: 
+            name: ${{ needs.build.outputs.env_name }}
+        steps: 
+            - 
+                name: Output the detected environment name
+                id: env_check
+                run: |
+                  echo "Deploying into environment ${{ needs.build.outputs.env_name }}"
+            - 
+                uses: actions/checkout@v2
+            - 
+                uses: actions/cache@v1
+                with:
+                  path: ~/.m2/repository
+                  key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+                  restore-keys: |
+                    ${{ runner.os }}-maven-
+            - 
+                uses: actions/download-artifact@master
+                with:
+                  name: artifacts
+            - 
+                name: Deploy to CloudHub
+                run: |
+                  artifactName=$(ls *.jar | head -1)
+                  mvn deploy -DmuleDeploy -DskipTests -Dmule.artifact=$artifactName -Danypoint.env=Sandbox -Danypoint.appName=mkogan-cicd-example -Danypoint.username=${{ secrets.ANYPOINT_USERNAME }} -Danypoint.password=${{ secrets.ANYPOINT_PASSWORD }} -Danypoint.env.client_id=${{ secrets.ANYPOINT_ENV_CLIENT_ID }} -Danypoint.env.client_password=${{ secrets.ANYPOINT_ENV_CLIENT_PASSWORD }}  -Danypoint.muleVersion=4.4.0 -Danypoint.region=eu-central-1
+        
+                      
+        

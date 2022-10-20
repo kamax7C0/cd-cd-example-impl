@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="cicd-test-suite.xml" />
+	<munit:test
+		name="cicd-test-suite-get:\helloworld:hello-ci-cd-example-api-configTest"
+		doc:id="9f623392-97ec-43b8-bf6f-ee1768106573" description="Test">
+		<munit:execution>
+			<flow-ref
+				doc:name="Flow-ref to get:\helloworld:hello-ci-cd-example-api-config"
+				doc:id="b14f4879-c3ae-4be5-8cec-fd637cdb8e84"
+				name="get:\helloworld:hello-ci-cd-example-api-config" />
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that
+				doc:name="Assert that" doc:id="09be8b82-278a-4c7c-a6d0-8e8be39351b7"
+				expression="#[payload.message]" is="#[MunitTools::containsString('Hello')]"
+				message="Hello could not be found"></munit-tools:assert-that>
+		</munit:validation>
+	</munit:test>
+</mule>
