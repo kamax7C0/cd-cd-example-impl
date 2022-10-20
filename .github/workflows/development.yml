@@ -48,7 +48,7 @@ jobs:
                       ]      
             - 
                 name: Build
-                run: mvn -B package -DskipMunitTests --file pom.xml
+                run: mvn -B clean package -DskipMunitTests --file pom.xml
             - 
                 name: Stamp artifact file name with commit hash
                 run:   |
@@ -68,8 +68,8 @@ jobs:
                   echo "Running on branch ${{ github.ref }}"
                   if [ "${{ github.ref }}" = "refs/heads/master" ]; then
                     echo "::set-output name=env_name::Production"
-                  elif [ "${{ github.ref }}" = "refs/heads/develop" ]; then
-                    echo "::set-output name=env_name::Test"
+                  elif [ "${{ github.ref }}" = "refs/heads/development" ]; then
+                    echo "::set-output name=env_name::Development"
                   else
                      echo "::set-output name=env_name::Features"
                   fi         
@@ -80,8 +80,7 @@ jobs:
         outputs:
             env_name: ${{ steps.branch_check.outputs.env_name }}
     deploy:
-        needs: [build]
-        name: Deploy the API 
+        needs: build
         runs-on: ubuntu-latest
         environment: 
             name: ${{ needs.build.outputs.env_name }}
@@ -91,3 +90,24 @@ jobs:
                 id: env_check
                 run: |
                   echo "Deploying into environment ${{ needs.build.outputs.env_name }}"
+            - 
+                uses: actions/checkout@v2
+            - 
+                uses: actions/cache@v1
+                with:
+                  path: ~/.m2/repository
+                  key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+                  restore-keys: |
+                    ${{ runner.os }}-maven-
+            - 
+                uses: actions/download-artifact@master
+                with:
+                  name: artifacts
+            - 
+                name: Deploy to CloudHub
+                run: |
+                  artifactName=$(ls *.jar | head -1)
+                  mvn deploy -DmuleDeploy -DskipTests -Dmule.artifact=$artifactName -Danypoint.env=Sandbox -Danypoint.appName=mkogan-cicd-example -Danypoint.username=${{ secrets.ANYPOINT_USERNAME }} -Danypoint.password=${{ secrets.ANYPOINT_PASSWORD }}  -Danypoint.muleVersion=4.4.0 -Danypoint.region=eu-central-1
+        
+                      
+        
