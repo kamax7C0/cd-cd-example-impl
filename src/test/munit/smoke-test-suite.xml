@@ -17,7 +17,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 			<http:request method="GET" doc:name="Request" doc:id="d2eebc46-89b4-4567-9f25-78eb338fd0a8" config-ref="HTTP_Request_configuration" path="helloworld" outputMimeType="application/json"/>
 		</munit:execution>
 		<munit:validation >
-			<munit-tools:assert-that doc:name="Assert that" doc:id="6c105938-3ed3-4b6c-b5ea-99300f03d567" is="#[MunitTools::containsString('Hello')]" expression="#[payload.message]" message="Smoke test failed: Hello could not be found"/>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="6c105938-3ed3-4b6c-b5ea-99300f03d567" is="#[MunitTools::containsString('Welcome')]" expression="#[payload.message]" message="Smoke test failed: Hello could not be found"/>
 		</munit:validation>
 	</munit:test>
 

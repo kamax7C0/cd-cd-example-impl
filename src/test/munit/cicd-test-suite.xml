@@ -22,7 +22,7 @@
 		<munit:validation>
 			<munit-tools:assert-that
 				doc:name="Assert that" doc:id="09be8b82-278a-4c7c-a6d0-8e8be39351b7"
-				expression="#[payload.message]" is="#[MunitTools::containsString('Hello')]"
+				expression="#[payload.message]" is="#[MunitTools::containsString('Welcome')]"
 				message="Hello could not be found"></munit-tools:assert-that>
 		</munit:validation>
 	</munit:test>

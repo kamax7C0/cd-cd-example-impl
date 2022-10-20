@@ -133,7 +133,7 @@ output application/json
 output application/json
 ---
 {
-  message: "Hello world"
+  message: "Welcome world"
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>
