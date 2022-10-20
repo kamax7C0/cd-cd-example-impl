@@ -107,7 +107,7 @@ jobs:
                 name: Deploy to CloudHub
                 run: |
                   artifactName=$(ls *.jar | head -1)
-                  mvn deploy -DmuleDeploy -DskipTests -Dmule.artifact=$artifactName -Danypoint.env=Sandbox -Danypoint.appName=mkogan-cicd-example -Danypoint.username=${{ secrets.ANYPOINT_USERNAME }} -Danypoint.password=${{ secrets.ANYPOINT_PASSWORD }}  -Danypoint.muleVersion=4.4.0 -Danypoint.region=eu-central-1
+                  mvn deploy -DmuleDeploy -DskipTests -Dmule.artifact=$artifactName -Danypoint.env=Sandbox -Danypoint.appName=mkogan-cicd-example -Danypoint.username=${{ secrets.ANYPOINT_USERNAME }} -Danypoint.password=${{ secrets.ANYPOINT_PASSWORD }} -Danypoint.env.client_id=${{ secrets.ANYPOINT_ENV_CLIENT_ID }} -Danypoint.env.client_password=${{ secrets.ANYPOINT_ENV_CLIENT_PASSWORD }}  -Danypoint.muleVersion=4.4.0 -Danypoint.region=eu-central-1
         
                       
         

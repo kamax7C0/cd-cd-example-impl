@@ -6,7 +6,7 @@ http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/m
     </http:listener-config>
     <apikit:config name="hello-ci-cd-example-api-config" api="resource::43a718ca-48cf-46ae-b9bf-79e2274cb566:hello-ci-cd-example-api:1.0.0:raml:zip:hello-ci-cd-example-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <configuration-properties doc:name="Configuration properties" doc:id="57cdc6c8-c7f4-4504-b93f-c73d33db94ea" file="config.yaml" />
-	<api-gateway:autodiscovery apiId="1510155" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="a9b53041-b225-4896-9724-7d9f4a16d3b1" flowRef="hello-ci-cd-example-api-main" />
+	<api-gateway:autodiscovery apiId="1510471" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="a9b53041-b225-4896-9724-7d9f4a16d3b1" flowRef="get:\helloworld:hello-ci-cd-example-api-config" />
 	<flow name="hello-ci-cd-example-api-main">
         <http:listener config-ref="hello-ci-cd-example-api-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
