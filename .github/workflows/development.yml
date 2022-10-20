@@ -1,9 +1,14 @@
 # This workflow will build a MuleSoft project and deploy to CloudHub
 name: Test CI Pipeline
-on:  
-    push:  
+on: 
+    push:
+      branches:
+        - 'feature/**'
+        - development 
+    pull_request:  
         branches: 
             - development
+            - master
 jobs:  
     build:  
         runs-on: ubuntu-latest
@@ -56,3 +61,33 @@ jobs:
                 with:  
                     name: artifacts
                     path: target/*.jar
+            - 
+                name: Some check on branch
+                id: branch_check
+                run: |
+                  echo "Running on branch ${{ github.ref }}"
+                  if [ "${{ github.ref }}" = "refs/heads/master" ]; then
+                    echo "::set-output name=env_name::Production"
+                  elif [ "${{ github.ref }}" = "refs/heads/develop" ]; then
+                    echo "::set-output name=env_name::Test"
+                  else
+                     echo "::set-output name=env_name::Features"
+                  fi         
+                  
+            - 
+                name: Use variable setup in previous step
+                run: echo "I'm using variable ${{ steps.branch_check.outputs.env_name }}"
+        outputs:
+            env_name: ${{ steps.branch_check.outputs.env_name }}
+    deploy:
+        needs: [build]
+        name: Deploy the API 
+        runs-on: ubuntu-latest
+        environment: 
+            name: ${{ needs.build.outputs.env_name }}
+        steps: 
+            - 
+                name: Output the detected environment name
+                id: env_check
+                run: |
+                  echo "Deploying into environment ${{ needs.build.outputs.env_name }}"
